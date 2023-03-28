@@ -1,8 +1,16 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import { useSession, signIn } from "next-auth/react";
 
 const Home: NextPage = () => {
+  const { data: session } = useSession();
+  const handleSignIn = () => {
+    void signIn("discord");
+  };
+
+  console.log(session);
+
   return (
     <>
       <Head>
@@ -23,12 +31,23 @@ const Home: NextPage = () => {
           </div>
 
           <div className="flex justify-center">
-            <Link
-              href={"/login"}
-              className="text-md rounded-lg bg-gray-800 px-5 py-2.5 font-medium text-white hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
-            >
-              Create collection
-            </Link>
+            {!session && (
+              <button
+                onClick={handleSignIn}
+                className="text-md rounded-lg bg-gray-800 px-5 py-2.5 font-medium text-white hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
+              >
+                Create collection
+              </button>
+            )}
+
+            {session && (
+              <Link
+                href={`/${session.user.id}`}
+                className="text-md rounded-lg bg-gray-800 px-5 py-2.5 font-medium text-white hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
+              >
+                Create collection
+              </Link>
+            )}
           </div>
         </header>
       </main>
