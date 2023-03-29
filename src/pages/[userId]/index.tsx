@@ -1,25 +1,36 @@
-import { type NextPage } from "next";
-import { useSession } from "next-auth/react";
-import { type FormEvent } from "react";
-import { useRouter } from "next/router";
+import { getServerAuthSession } from "@server/auth";
+import { type GetServerSidePropsContext } from "next";
+import { type Session } from "next-auth";
+import { signOut } from "next-auth/react";
 
-const UserProfile: NextPage = () => {
-  const { data: session } = useSession();
-  const router = useRouter();
-  console.log(router.pathname);
+interface ProfileProps {
+  userSession: Session;
+}
 
-  const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-  };
+export default function Profile({ userSession: session }: ProfileProps) {
+  if (!session) return <p>Not found...</p>;
 
   return (
     <div>
-      <h1 className="mb-16">User Page for: {session?.user.name}</h1>
-      <form onSubmit={(e) => handleFormSubmit(e)}>
-        <input type="text" />
-      </form>
+      <h1 className="mb-16">User Page for: {session.user.name}</h1>
+      <button onClick={() => void signOut()}>Sign Out</button>
     </div>
   );
-};
+}
 
-export default UserProfile;
+export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+  const session = await getServerAuthSession(ctx);
+
+  if (!session) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/",
+      },
+    };
+  }
+
+  return {
+    props: { userSession: session },
+  };
+}
