@@ -11,10 +11,14 @@ export default function Profile({ userSession: session }: ProfileProps) {
   if (!session) return <p>Not found...</p>;
 
   return (
-    <div>
-      <h1 className="mb-16">User Page for: {session.user.name}</h1>
-      <button onClick={() => void signOut()}>Sign Out</button>
-    </div>
+    <main className="mx-auto w-full p-4 md:max-w-2xl">
+      <div className="flex items-center justify-between">
+        <h1 className="text-4xl font-semibold text-zinc-300">
+          {session.user.name}&apos;s collections
+        </h1>
+        <button onClick={() => void signOut()}>Sign Out</button>
+      </div>
+    </main>
   );
 }
 
