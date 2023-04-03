@@ -28,6 +28,10 @@ export default function Profile({ userSession: session }: ProfileProps) {
 
   const handleFormSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const [title, ...clips] = formData;
+
+    console.log(clips);
   };
 
   return (
@@ -48,7 +52,7 @@ export default function Profile({ userSession: session }: ProfileProps) {
           Add new collection
         </h2>
 
-        <form onSubmit={(e) => handleFormSubmit(e)}>
+        <form onSubmit={(e) => handleFormSubmit(e)} id="collection">
           <div className="flex flex-col gap-2">
             <label htmlFor="name" className="text-sm">
               Collection name
@@ -58,6 +62,7 @@ export default function Profile({ userSession: session }: ProfileProps) {
               id="name"
               className="px-4 py-2 text-zinc-900"
               required
+              name="collectionTitle"
             />
 
             <label htmlFor="">Clips</label>
@@ -71,6 +76,7 @@ export default function Profile({ userSession: session }: ProfileProps) {
                     className="w-full px-4 py-2 text-zinc-900"
                     placeholder={input.title}
                     required
+                    name="clipTitle"
                   />
                   <input
                     type="url"
@@ -78,6 +84,7 @@ export default function Profile({ userSession: session }: ProfileProps) {
                     className="w-full px-4 py-2 text-zinc-900"
                     placeholder={input.url}
                     required
+                    name="clipUrl"
                   />
                 </div>
               );
