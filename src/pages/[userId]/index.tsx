@@ -4,19 +4,26 @@ import { type GetServerSidePropsContext } from "next";
 import { type Session } from "next-auth";
 import { signOut } from "next-auth/react";
 import { type FormEvent, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 interface ProfileProps {
   userSession: Session;
 }
 
 export default function Profile({ userSession: session }: ProfileProps) {
-  const [inputs, setInputs] = useState([0]);
+  const [inputs, setInputs] = useState([
+    { title: "Title", url: "Clip URL", key: uuidv4() },
+  ]);
 
   if (!session) return <p>Not found...</p>;
 
   const handleAddMore = () => {
     console.log("Clicked");
-    setInputs((state) => [...state, state.length - 1]);
+
+    setInputs((prev) => [
+      ...prev,
+      { title: "Title", url: "Clip URL", key: uuidv4() },
+    ]);
   };
 
   const handleFormSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -46,18 +53,33 @@ export default function Profile({ userSession: session }: ProfileProps) {
             <label htmlFor="name" className="text-sm">
               Collection name
             </label>
-            <input type="text" id="name" className="px-4 py-2 text-zinc-900" />
+            <input
+              type="text"
+              id="name"
+              className="px-4 py-2 text-zinc-900"
+              required
+            />
 
             <label htmlFor="">Clips</label>
-            {inputs.map((_input, idx) => {
+            {inputs.map((input) => {
               // TODO: Fix key here
               return (
-                <input
-                  type="text"
-                  id="name"
-                  className="px-4 py-2 text-zinc-900"
-                  key={idx}
-                />
+                <div key={input.key} className="flex justify-between gap-3">
+                  <input
+                    type="text"
+                    id="title"
+                    className="w-full px-4 py-2 text-zinc-900"
+                    placeholder={input.title}
+                    required
+                  />
+                  <input
+                    type="url"
+                    id="url"
+                    className="w-full px-4 py-2 text-zinc-900"
+                    placeholder={input.url}
+                    required
+                  />
+                </div>
               );
             })}
 
