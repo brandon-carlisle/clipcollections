@@ -82,12 +82,13 @@ export default function Profile({ userSession: session }: ProfileProps) {
                 </div>
               );
             })}
-
-            <Button
-              clickHandler={handleAddMore}
-              content="Add more"
-              type="button"
-            />
+            <div className="mb-4">
+              <Button
+                clickHandler={handleAddMore}
+                content="Add more"
+                type="button"
+              />
+            </div>
           </div>
 
           <Button content="Add collection" type="submit" />
