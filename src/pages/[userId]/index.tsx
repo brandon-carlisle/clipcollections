@@ -28,8 +28,17 @@ export default function Profile({ userSession: session }: ProfileProps) {
 
   const handleFormSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     const formData = new FormData(e.currentTarget);
-    const [title, ...clips] = formData;
+    const titles = formData.getAll("clipTitle");
+    const clipUrls = formData.getAll("clipUrl");
+
+    const clips = titles.map((title, index) => {
+      return {
+        title: title.toString(),
+        url: clipUrls[index]?.toString(),
+      };
+    });
 
     console.log(clips);
   };
