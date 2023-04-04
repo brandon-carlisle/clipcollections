@@ -1,5 +1,6 @@
 import Button from "@components/Button";
 import { getServerAuthSession } from "@server/auth";
+import { api } from "@utils/api";
 import { type GetServerSidePropsContext } from "next";
 import { type Session } from "next-auth";
 import { signOut } from "next-auth/react";
@@ -30,6 +31,7 @@ export default function Profile({ userSession: session }: ProfileProps) {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
+    const collectionTitle = formData.get("collectionTitle")?.toString();
     const titles = formData.getAll("clipTitle");
     const clipUrls = formData.getAll("clipUrl");
 
@@ -40,7 +42,9 @@ export default function Profile({ userSession: session }: ProfileProps) {
       };
     });
 
-    console.log(clips);
+    api.collection.addCollection
+      .useMutation()
+      .mutate({ collectionName: collectionTitle, clips });
   };
 
   return (

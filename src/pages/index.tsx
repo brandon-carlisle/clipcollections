@@ -30,6 +30,7 @@ export default function HomePage() {
               <Button
                 content="Create collection"
                 clickHandler={() => void signIn("twitch")}
+                type="button"
               />
             )}
 
