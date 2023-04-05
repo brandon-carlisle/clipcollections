@@ -16,6 +16,8 @@ export default function Profile({ userSession: session }: ProfileProps) {
     { title: "Title", url: "Clip URL", key: uuidv4() },
   ]);
 
+  const newCollection = api.collection.addCollection.useMutation();
+
   if (!session) return <p>Not found...</p>;
 
   const handleAddMore = () => {
@@ -42,9 +44,9 @@ export default function Profile({ userSession: session }: ProfileProps) {
       };
     });
 
-    api.collection.addCollection
-      .useMutation()
-      .mutate({ collectionName: collectionTitle, clips });
+    if (collectionTitle) {
+      newCollection.mutate({ collectionName: collectionTitle, clips });
+    }
   };
 
   return (

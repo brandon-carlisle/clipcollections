@@ -15,12 +15,7 @@ export const collectionRouter = createTRPCRouter({
           .array(
             z.object({
               title: z.string(),
-              url: z
-                .string()
-                .url()
-                .startsWith(
-                  "https://clips.twitch.tv/" || "https://www.twitch.tv/"
-                ),
+              url: z.string().url().includes("twitch.tv/"),
             })
           )
           .nonempty(),
