@@ -4,8 +4,7 @@ import { api } from "@utils/api";
 import { type GetServerSidePropsContext } from "next";
 import { type Session } from "next-auth";
 import { signOut } from "next-auth/react";
-import { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+
 import { useForm, useFieldArray } from "react-hook-form";
 
 interface ProfileProps {
@@ -25,13 +24,20 @@ export default function Profile({ userSession: session }: ProfileProps) {
     register,
     formState: { errors },
     control,
+    handleSubmit,
   } = useForm<FormValues>({
     defaultValues: { collectionTitle: "", clips: [{ title: "", url: "" }] },
   });
 
-  const { fields } = useFieldArray({ name: "clips", control });
+  const { fields, remove, append } = useFieldArray({ name: "clips", control });
 
-  if (!session) return <p>Not found...</p>;
+  const onSubmit = (data) => {
+    console.log(data);
+  };
+
+  const onError = (errors) => {
+    console.error(errors);
+  };
 
   return (
     <main className="mx-auto w-full p-4 md:max-w-2xl">
@@ -51,7 +57,8 @@ export default function Profile({ userSession: session }: ProfileProps) {
           Add new collection
         </h2>
 
-        <form>
+        {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
+        <form onSubmit={handleSubmit(onSubmit, onError)}>
           <div className="mb-5 flex w-full flex-col gap-1">
             <label htmlFor="name">Collection name</label>
             <input
@@ -63,21 +70,24 @@ export default function Profile({ userSession: session }: ProfileProps) {
           </div>
 
           {fields.map((field, index) => (
-            <div key={field.id} className="flex justify-between gap-3">
+            <div key={field.id} className="mb-3 flex justify-between gap-3">
               <div className="flex w-full flex-col gap-1">
-                <label>Clip title</label>
                 <input
                   {...register(`clips.${index}.title`)}
                   className="w-full px-4 py-2 text-zinc-900"
+                  placeholder="Clip title"
                 />
               </div>
               <div className="flex w-full flex-col gap-1">
-                <label>Clip URL</label>
                 <input
                   {...register(`clips.${index}.url`)}
                   className="w-full px-4 py-2 text-zinc-900"
+                  placeholder="Clip URL"
                 />
               </div>
+              <button type="button" onClick={() => remove(index)}>
+                🗑️
+              </button>
             </div>
           ))}
 
@@ -86,6 +96,7 @@ export default function Profile({ userSession: session }: ProfileProps) {
               // clickHandler={handleAddMore}
               content="Add more"
               type="button"
+              clickHandler={() => append({ title: "", url: "" })}
             />
           </div>
 
