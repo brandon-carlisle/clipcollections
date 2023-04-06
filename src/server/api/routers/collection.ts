@@ -10,7 +10,7 @@ export const collectionRouter = createTRPCRouter({
   addCollection: publicProcedure
     .input(
       z.object({
-        collectionName: z.string().min(1).max(16),
+        collectionTitle: z.string().min(1).max(16),
         clips: z
           .array(
             z.object({
@@ -23,12 +23,12 @@ export const collectionRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       await ctx.prisma.collection.create({
-        data: { name: input.collectionName, userId: ctx.session?.user.id },
+        data: { name: input.collectionTitle, userId: ctx.session?.user.id },
       });
 
       const collection = await ctx.prisma.collection.findFirst({
         where: {
-          name: { equals: input.collectionName },
+          name: { equals: input.collectionTitle },
           AND: { userId: { equals: ctx.session?.user.id } },
         },
       });

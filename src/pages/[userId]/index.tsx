@@ -9,12 +9,15 @@ import { useForm, useFieldArray, type SubmitHandler } from "react-hook-form";
 
 const formSchema = z.object({
   collectionTitle: z.string().min(1).max(12),
-  clips: z.array(
-    z.object({
-      title: z.string().nonempty(),
-      url: z.string().url(),
-    })
-  ),
+  clips: z
+    .array(
+      z.object({
+        title: z.string(),
+        url: z.string().url().includes("twitch.tv/"),
+      })
+    )
+    .min(1, { message: "At least one clip needed" })
+    .max(10, { message: "Only ten clips allowed" }),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -92,12 +95,11 @@ export default function Profile({ userSession: session }: ProfileProps) {
               </button>
             </div>
           ))}
-          <p>{errors.clips?.message}</p>
+          <p className="font-bold text-red-500">{errors.clips?.message}</p>
 
           <div className="mb-4">
             <Button
-              // clickHandler={handleAddMore}
-              content="Add more"
+              content="Add clip"
               type="button"
               clickHandler={() => append({ title: "", url: "" })}
             />
