@@ -4,50 +4,34 @@ import { api } from "@utils/api";
 import { type GetServerSidePropsContext } from "next";
 import { type Session } from "next-auth";
 import { signOut } from "next-auth/react";
-import { type FormEvent, useState } from "react";
+import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { useForm, useFieldArray } from "react-hook-form";
 
 interface ProfileProps {
   userSession: Session;
 }
 
-export default function Profile({ userSession: session }: ProfileProps) {
-  const [inputs, setInputs] = useState([
-    { title: "Title", url: "Clip URL", key: uuidv4() },
-  ]);
+interface FormValues {
+  collectionTitle: string;
+  clips: {
+    title: string;
+    url: string;
+  }[];
+}
 
-  const newCollection = api.collection.addCollection.useMutation();
+export default function Profile({ userSession: session }: ProfileProps) {
+  const {
+    register,
+    formState: { errors },
+    control,
+  } = useForm<FormValues>({
+    defaultValues: { collectionTitle: "", clips: [{ title: "", url: "" }] },
+  });
+
+  const { fields } = useFieldArray({ name: "clips", control });
 
   if (!session) return <p>Not found...</p>;
-
-  const handleAddMore = () => {
-    console.log("Clicked");
-
-    setInputs((prev) => [
-      ...prev,
-      { title: "Title", url: "Clip URL", key: uuidv4() },
-    ]);
-  };
-
-  const handleFormSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const formData = new FormData(e.currentTarget);
-    const collectionTitle = formData.get("collectionTitle")?.toString();
-    const titles = formData.getAll("clipTitle");
-    const clipUrls = formData.getAll("clipUrl");
-
-    const clips = titles.map((title, index) => {
-      return {
-        title: title.toString(),
-        url: clipUrls[index]?.toString(),
-      };
-    });
-
-    if (collectionTitle) {
-      newCollection.mutate({ collectionName: collectionTitle, clips });
-    }
-  };
 
   return (
     <main className="mx-auto w-full p-4 md:max-w-2xl">
@@ -67,50 +51,42 @@ export default function Profile({ userSession: session }: ProfileProps) {
           Add new collection
         </h2>
 
-        <form onSubmit={(e) => handleFormSubmit(e)} id="collection">
-          <div className="flex flex-col gap-2">
-            <label htmlFor="name" className="text-sm">
-              Collection name
-            </label>
+        <form>
+          <div className="mb-5 flex w-full flex-col gap-1">
+            <label htmlFor="name">Collection name</label>
             <input
               type="text"
-              id="name"
               className="px-4 py-2 text-zinc-900"
-              required
-              name="collectionTitle"
+              placeholder="My first collection"
+              {...register("collectionTitle")}
             />
+          </div>
 
-            <label htmlFor="">Clips</label>
-            {inputs.map((input) => {
-              // TODO: Fix key here
-              return (
-                <div key={input.key} className="flex justify-between gap-3">
-                  <input
-                    type="text"
-                    id="title"
-                    className="w-full px-4 py-2 text-zinc-900"
-                    placeholder={input.title}
-                    required
-                    name="clipTitle"
-                  />
-                  <input
-                    type="url"
-                    id="url"
-                    className="w-full px-4 py-2 text-zinc-900"
-                    placeholder={input.url}
-                    required
-                    name="clipUrl"
-                  />
-                </div>
-              );
-            })}
-            <div className="mb-4">
-              <Button
-                clickHandler={handleAddMore}
-                content="Add more"
-                type="button"
-              />
+          {fields.map((field, index) => (
+            <div key={field.id} className="flex justify-between gap-3">
+              <div className="flex w-full flex-col gap-1">
+                <label>Clip title</label>
+                <input
+                  {...register(`clips.${index}.title`)}
+                  className="w-full px-4 py-2 text-zinc-900"
+                />
+              </div>
+              <div className="flex w-full flex-col gap-1">
+                <label>Clip URL</label>
+                <input
+                  {...register(`clips.${index}.url`)}
+                  className="w-full px-4 py-2 text-zinc-900"
+                />
+              </div>
             </div>
+          ))}
+
+          <div className="mb-4">
+            <Button
+              // clickHandler={handleAddMore}
+              content="Add more"
+              type="button"
+            />
           </div>
 
           <Button content="Add collection" type="submit" />
