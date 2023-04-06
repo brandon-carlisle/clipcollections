@@ -1,22 +1,26 @@
 import Button from "@components/Button";
 import { getServerAuthSession } from "@server/auth";
-import { api } from "@utils/api";
 import { type GetServerSidePropsContext } from "next";
 import { type Session } from "next-auth";
 import { signOut } from "next-auth/react";
+import z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, useFieldArray, type SubmitHandler } from "react-hook-form";
 
-import { useForm, useFieldArray } from "react-hook-form";
+const formSchema = z.object({
+  collectionTitle: z.string().min(1).max(12),
+  clips: z.array(
+    z.object({
+      title: z.string().nonempty(),
+      url: z.string().url(),
+    })
+  ),
+});
+
+type FormData = z.infer<typeof formSchema>;
 
 interface ProfileProps {
   userSession: Session;
-}
-
-interface FormValues {
-  collectionTitle: string;
-  clips: {
-    title: string;
-    url: string;
-  }[];
 }
 
 export default function Profile({ userSession: session }: ProfileProps) {
@@ -25,18 +29,15 @@ export default function Profile({ userSession: session }: ProfileProps) {
     formState: { errors },
     control,
     handleSubmit,
-  } = useForm<FormValues>({
-    defaultValues: { collectionTitle: "", clips: [{ title: "", url: "" }] },
+  } = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: { clips: [{ title: "", url: "" }] },
   });
 
   const { fields, remove, append } = useFieldArray({ name: "clips", control });
 
-  const onSubmit = (data) => {
+  const onSubmit: SubmitHandler<FormData> = (data) => {
     console.log(data);
-  };
-
-  const onError = (errors) => {
-    console.error(errors);
   };
 
   return (
@@ -58,7 +59,7 @@ export default function Profile({ userSession: session }: ProfileProps) {
         </h2>
 
         {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
-        <form onSubmit={handleSubmit(onSubmit, onError)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-5 flex w-full flex-col gap-1">
             <label htmlFor="name">Collection name</label>
             <input
@@ -67,6 +68,7 @@ export default function Profile({ userSession: session }: ProfileProps) {
               placeholder="My first collection"
               {...register("collectionTitle")}
             />
+            <p>{errors.collectionTitle?.message}</p>
           </div>
 
           {fields.map((field, index) => (
@@ -90,6 +92,7 @@ export default function Profile({ userSession: session }: ProfileProps) {
               </button>
             </div>
           ))}
+          <p>{errors.clips?.message}</p>
 
           <div className="mb-4">
             <Button
