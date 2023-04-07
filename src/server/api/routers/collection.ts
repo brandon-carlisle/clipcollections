@@ -1,10 +1,10 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 import {
   createTRPCRouter,
-  publicProcedure,
   protectedProcedure,
-} from "@server/api/trpc";
+  publicProcedure,
+} from '@server/api/trpc';
 
 export const collectionRouter = createTRPCRouter({
   addCollection: publicProcedure
@@ -15,11 +15,11 @@ export const collectionRouter = createTRPCRouter({
           .array(
             z.object({
               title: z.string(),
-              url: z.string().url().includes("twitch.tv/"),
-            })
+              url: z.string().url().includes('twitch.tv/'),
+            }),
           )
           .nonempty(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       await ctx.prisma.collection.create({
@@ -42,7 +42,7 @@ export const collectionRouter = createTRPCRouter({
               title: clip.title,
               url: clip.url,
             },
-          })
+          }),
       );
     }),
 
@@ -51,6 +51,6 @@ export const collectionRouter = createTRPCRouter({
   }),
 
   getSecretMessage: protectedProcedure.query(() => {
-    return "you can now see this secret message!";
+    return 'you can now see this secret message!';
   }),
 });

@@ -1,9 +1,9 @@
-import { type ReactNode } from "react";
+import { type ReactNode } from 'react';
 
 interface ButtonProps {
   content: ReactNode | string;
   clickHandler?: () => void;
-  type: "button" | "submit";
+  type: 'button' | 'submit';
 }
 
 export default function Button({ content, clickHandler, type }: ButtonProps) {

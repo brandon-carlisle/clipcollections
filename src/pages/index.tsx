@@ -1,7 +1,8 @@
-import Head from "next/head";
-import Link from "next/link";
-import { useSession, signIn } from "next-auth/react";
-import Button from "@components/Button";
+import { signIn, useSession } from 'next-auth/react';
+import Head from 'next/head';
+import Link from 'next/link';
+
+import Button from '@components/Button';
 
 export default function HomePage() {
   const { data: session } = useSession();
@@ -29,7 +30,7 @@ export default function HomePage() {
             {!session && (
               <Button
                 content="Create collection"
-                clickHandler={() => void signIn("twitch")}
+                clickHandler={() => void signIn('twitch')}
                 type="button"
               />
             )}
