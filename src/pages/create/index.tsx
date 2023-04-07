@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { api } from '@utils/api';
 import { type GetServerSidePropsContext } from 'next';
 import { type SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -22,7 +23,7 @@ export default function Create() {
   );
 }
 
-const formSchema = z.object({
+export const formSchema = z.object({
   collectionTitle: z
     .string()
     .min(1, { message: 'Title must contain at least 1 character(s)' })
@@ -65,8 +66,15 @@ function CreateCollectionForm() {
 
   const { fields, remove, append } = useFieldArray({ name: 'clips', control });
 
+  const createCollection = api.collection.create.useMutation();
+
   const onSubmit: SubmitHandler<FormData> = (data) => {
     console.log(data);
+
+    createCollection.mutate({
+      collectionTitle: data.collectionTitle,
+      clips: data.clips,
+    });
   };
 
   return (

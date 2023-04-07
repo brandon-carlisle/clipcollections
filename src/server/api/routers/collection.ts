@@ -1,26 +1,10 @@
-import { z } from 'zod';
+import { formSchema } from 'src/pages/create';
 
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from '@server/api/trpc';
+import { createTRPCRouter, protectedProcedure } from '@server/api/trpc';
 
 export const collectionRouter = createTRPCRouter({
-  addCollection: publicProcedure
-    .input(
-      z.object({
-        collectionTitle: z.string().min(1).max(16),
-        clips: z
-          .array(
-            z.object({
-              title: z.string(),
-              url: z.string().url().includes('twitch.tv/'),
-            }),
-          )
-          .nonempty(),
-      }),
-    )
+  create: protectedProcedure
+    .input(formSchema)
     .mutation(async ({ input, ctx }) => {
       await ctx.prisma.collection.create({
         data: { name: input.collectionTitle, userId: ctx.session?.user.id },
@@ -46,11 +30,7 @@ export const collectionRouter = createTRPCRouter({
       );
     }),
 
-  getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.example.findMany();
-  }),
-
-  getSecretMessage: protectedProcedure.query(() => {
-    return 'you can now see this secret message!';
-  }),
+  // getAll: publicProcedure.query(({ ctx }) => {
+  //   return ctx.prisma.example.findMany();
+  // }),
 });
