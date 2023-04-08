@@ -17,17 +17,13 @@ export const collectionRouter = createTRPCRouter({
         },
       });
 
-      input.clips.forEach(
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        async (clip) =>
-          await ctx.prisma.clip.create({
-            data: {
-              collectionId: collection?.id,
-              title: clip.title,
-              url: clip.url,
-            },
-          }),
-      );
+      const clips = input.clips.map((clip) => ({
+        collectionId: collection?.id,
+        title: clip.title,
+        url: clip.url,
+      }));
+
+      await ctx.prisma.clip.createMany({ data: clips });
     }),
 
   // getAll: publicProcedure.query(({ ctx }) => {
