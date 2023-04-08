@@ -152,6 +152,8 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     };
   }
 
+  ctx;
+
   return {
     props: { userSession: session },
   };

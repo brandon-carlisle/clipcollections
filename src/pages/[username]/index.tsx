@@ -1,6 +1,5 @@
 import { api } from '@utils/api';
 import { signOut } from 'next-auth/react';
-import { useRouter } from 'next/router';
 
 import Button from '@components/Button';
 import Layout from '@components/Layout';
@@ -8,17 +7,21 @@ import Layout from '@components/Layout';
 export default function Profile() {
   // TODO: get user by username here
 
-  const router = useRouter();
+  const { data, isLoading, error } = api.profile.getUserByUsername.useQuery({
+    username: 'beanzmate',
+  });
 
-  console.log(router.query);
+  console.log(data);
 
-  const { data } = api.profile.getUserByUsername.useQuery(router.query);
+  if (error) return <p>{error.message}</p>;
+
+  if (isLoading) return <p>Loading...</p>;
 
   return (
     <Layout>
       <div className="mb-20 flex flex-col justify-between gap-2 md:flex-row md:items-center">
         <h1 className="text-4xl font-semibold text-zinc-300">
-          {'username'}&apos;s collections
+          {data?.name}&apos;s collections
         </h1>
         <Button
           clickHandler={() => void signOut()}
@@ -29,3 +32,21 @@ export default function Profile() {
     </Layout>
   );
 }
+
+// interface Params extends ParsedUrlQuery {
+//   username: string;
+// }
+
+// export function getStaticProps(ctx: GetServerSidePropsContext) {
+//   const params = ctx.params as Params;
+
+//   const user = api.profile.getUserByUsername.useQuery({
+//     username: params.username,
+//   });
+
+//   console.log(user);
+
+//   return {
+//     props: {},
+//   };
+// }
