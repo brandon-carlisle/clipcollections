@@ -23,6 +23,11 @@ export default function Profile() {
         <h1 className="text-4xl font-semibold text-zinc-300">
           {data?.name}&apos;s collections
         </h1>
+
+        {data.image && data.name && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={data.image} alt={`${data.name}s profile image`} />
+        )}
         <Button
           clickHandler={() => void signOut()}
           content="Sign out"

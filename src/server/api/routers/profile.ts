@@ -8,12 +8,14 @@ export const profileRouter = createTRPCRouter({
     .input(z.object({ username: z.string() }))
     .query(async ({ ctx, input }) => {
       const user = await ctx.prisma.user.findFirst({
-        select: { name: true },
+        select: { name: true, image: true },
         where: { name: { equals: input.username } },
       });
 
       if (!user)
         throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' });
+
+      console.log(user);
 
       return user;
     }),
