@@ -81,6 +81,8 @@ function Collections({ userId }: { userId: string }) {
 
   if (!data) return <p>No data available</p>;
 
+  console.log(data);
+
   return (
     <div>
       {data.map((collection) => (
