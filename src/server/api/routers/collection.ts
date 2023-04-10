@@ -24,9 +24,10 @@ export const collectionRouter = createTRPCRouter({
       }));
 
       await ctx.prisma.clip.createMany({ data: clips });
-    }),
 
-  // getAll: publicProcedure.query(({ ctx }) => {
-  //   return ctx.prisma.example.findMany();
-  // }),
+      return {
+        collectionId: collection?.id,
+        username: ctx.session.user.name,
+      };
+    }),
 });

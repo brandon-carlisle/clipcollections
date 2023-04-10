@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { api } from '@utils/api';
 import { type GetServerSidePropsContext } from 'next';
+import { useRouter } from 'next/router';
 import { type SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -66,16 +67,26 @@ function CreateCollectionForm() {
 
   const { fields, remove, append } = useFieldArray({ name: 'clips', control });
 
-  const createCollection = api.collection.create.useMutation();
+  const router = useRouter();
+
+  const {
+    data,
+    isLoading,
+    mutate: createCollection,
+    isSuccess,
+  } = api.collection.create.useMutation();
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
-    console.log(data);
-
-    createCollection.mutate({
+    createCollection({
       collectionTitle: data.collectionTitle,
       clips: data.clips,
     });
   };
+
+  if (isSuccess && data.username && data.collectionId)
+    void router.push(`/${data.username}/${data.collectionId}`);
+
+  if (isLoading) return <p>Loading...</p>;
 
   return (
     <>

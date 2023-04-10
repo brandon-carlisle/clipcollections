@@ -2,13 +2,12 @@ import { TRPCError } from '@trpc/server';
 import z from 'zod';
 
 import { createTRPCRouter, publicProcedure } from '@server/api/trpc';
-import { prisma } from '@server/db';
 
 export const profileRouter = createTRPCRouter({
   getUserByUsername: publicProcedure
     .input(z.object({ username: z.string() }))
-    .query(async ({ input }) => {
-      const user = await prisma.user.findFirst({
+    .query(async ({ ctx, input }) => {
+      const user = await ctx.prisma.user.findFirst({
         select: { name: true },
         where: { name: { equals: input.username } },
       });
