@@ -1,27 +1,34 @@
 import { api } from '@utils/api';
+import {
+  type GetServerSidePropsContext,
+  type InferGetStaticPropsType,
+} from 'next';
 import { signOut } from 'next-auth/react';
+import { type ParsedUrlQuery } from 'querystring';
+
+import { generateSSGHelper } from '@server/helpers/generate';
 
 import Button from '@components/Button';
 import Layout from '@components/Layout';
 
-export default function Profile() {
-  // TODO: get user by username here
+export default function Profile(
+  props: InferGetStaticPropsType<typeof getStaticProps>,
+) {
+  console.log('Props: ', props);
 
-  const { data, isLoading, error } = api.profile.getUserByUsername.useQuery({
-    username: 'beanzmate',
+  const { data, error } = api.profile.getUserByUsername.useQuery({
+    username: props.username,
   });
-
-  console.log(data);
 
   if (error) return <p>{error.message}</p>;
 
-  if (isLoading) return <p>Loading...</p>;
+  if (!data) return <p>No user found</p>;
 
   return (
     <Layout>
       <div className="mb-20 flex flex-col justify-between gap-2 md:flex-row md:items-center">
         <h1 className="text-4xl font-semibold text-zinc-300">
-          {data?.name}&apos;s collections
+          {data.name}&apos;s collections
         </h1>
 
         {data.image && data.name && (
@@ -38,20 +45,27 @@ export default function Profile() {
   );
 }
 
-// interface Params extends ParsedUrlQuery {
-//   username: string;
-// }
+interface Params extends ParsedUrlQuery {
+  username: string;
+}
 
-// export function getStaticProps(ctx: GetServerSidePropsContext) {
-//   const params = ctx.params as Params;
+export async function getStaticProps(ctx: GetServerSidePropsContext) {
+  const params = ctx.params as Params;
 
-//   const user = api.profile.getUserByUsername.useQuery({
-//     username: params.username,
-//   });
+  const ssg = generateSSGHelper();
 
-//   console.log(user);
+  await ssg.profile.getUserByUsername.prefetch({
+    username: params.username,
+  });
 
-//   return {
-//     props: {},
-//   };
-// }
+  return {
+    props: {
+      trpcState: ssg.dehydrate(),
+      username: params.username,
+    },
+  };
+}
+
+export const getStaticPaths = () => {
+  return { paths: [], fallback: 'blocking' };
+};

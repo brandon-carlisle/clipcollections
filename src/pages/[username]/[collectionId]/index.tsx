@@ -1,4 +1,4 @@
-import { type GetServerSidePropsContext } from 'next';
+import { type GetStaticPropsContext } from 'next';
 
 import Layout from '@components/Layout';
 
@@ -14,10 +14,17 @@ export default function Collection() {
   );
 }
 
-export function getServerSideProps(ctx: GetServerSidePropsContext) {
+export function getStaticProps(ctx: GetStaticPropsContext) {
   console.log(ctx.params);
 
   return {
     props: {},
+  };
+}
+
+export function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: false,
   };
 }
