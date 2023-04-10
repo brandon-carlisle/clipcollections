@@ -3,20 +3,18 @@ import {
   type GetServerSidePropsContext,
   type InferGetStaticPropsType,
 } from 'next';
-import { signOut } from 'next-auth/react';
+import Image from 'next/image';
 import { type ParsedUrlQuery } from 'querystring';
 
 import { generateSSGHelper } from '@server/helpers/generate';
 
-import Button from '@components/Button';
 import Layout from '@components/Layout';
 
 export default function Profile(
   props: InferGetStaticPropsType<typeof getStaticProps>,
 ) {
-  console.log('Props: ', props);
-
-  const { data, error } = api.profile.getUserByUsername.useQuery({
+  // No loading states for this because we prefetch in getStaticProps
+  const { data, error } = api.profile.getByUsername.useQuery({
     username: props.username,
   });
 
@@ -26,21 +24,23 @@ export default function Profile(
 
   return (
     <Layout>
-      <div className="mb-20 flex flex-col justify-between gap-2 md:flex-row md:items-center">
+      <header className="mb-16 flex items-center justify-between">
         <h1 className="text-4xl font-semibold text-zinc-300">
           {data.name}&apos;s collections
         </h1>
 
         {data.image && data.name && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={data.image} alt={`${data.name}s profile image`} />
+          <Image
+            src={data.image}
+            alt={`${data.name}s profile image`}
+            width={48}
+            height={48}
+            className="rounded-full"
+          />
         )}
-        <Button
-          clickHandler={() => void signOut()}
-          content="Sign out"
-          type="button"
-        />
-      </div>
+      </header>
+
+      <Collections userId={data.id} />
     </Layout>
   );
 }
@@ -54,7 +54,7 @@ export async function getStaticProps(ctx: GetServerSidePropsContext) {
 
   const ssg = generateSSGHelper();
 
-  await ssg.profile.getUserByUsername.prefetch({
+  await ssg.profile.getByUsername.prefetch({
     username: params.username,
   });
 
@@ -69,3 +69,23 @@ export async function getStaticProps(ctx: GetServerSidePropsContext) {
 export const getStaticPaths = () => {
   return { paths: [], fallback: 'blocking' };
 };
+
+function Collections({ userId }: { userId: string }) {
+  const { data, isLoading, error } = api.collection.getAllByUserId.useQuery({
+    userId,
+  });
+
+  if (isLoading) return <p>Loading...</p>;
+
+  if (error) return <p>{error.message}</p>;
+
+  if (!data) return <p>No data available</p>;
+
+  return (
+    <div>
+      {data.map((collection) => (
+        <li key={collection.id}>{collection.name}</li>
+      ))}
+    </div>
+  );
+}

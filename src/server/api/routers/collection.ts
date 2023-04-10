@@ -1,6 +1,12 @@
+import { TRPCError } from '@trpc/server';
 import { formSchema } from 'src/pages/create';
+import z from 'zod';
 
-import { createTRPCRouter, protectedProcedure } from '@server/api/trpc';
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from '@server/api/trpc';
 
 export const collectionRouter = createTRPCRouter({
   create: protectedProcedure
@@ -29,5 +35,21 @@ export const collectionRouter = createTRPCRouter({
         collectionId: collection?.id,
         username: ctx.session.user.name,
       };
+    }),
+
+  getAllByUserId: publicProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const collections = await ctx.prisma.collection.findMany({
+        where: { userId: { equals: input.userId } },
+      });
+
+      if (!collections || collections.length === 0)
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'No collections found for user',
+        });
+
+      return collections;
     }),
 });

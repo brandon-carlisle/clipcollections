@@ -4,11 +4,11 @@ import z from 'zod';
 import { createTRPCRouter, publicProcedure } from '@server/api/trpc';
 
 export const profileRouter = createTRPCRouter({
-  getUserByUsername: publicProcedure
+  getByUsername: publicProcedure
     .input(z.object({ username: z.string() }))
     .query(async ({ ctx, input }) => {
       const user = await ctx.prisma.user.findFirst({
-        select: { name: true, image: true },
+        select: { name: true, image: true, id: true },
         where: { name: { equals: input.username } },
       });
 
