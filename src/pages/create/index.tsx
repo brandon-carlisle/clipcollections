@@ -7,17 +7,15 @@ import { z } from 'zod';
 
 import { getServerAuthSession } from '@server/auth';
 
-import Button from '@components/Button';
 import Layout from '@components/Layout';
+import { Button } from '@components/ui/Button';
+import { Input } from '@components/ui/Input';
 
 export default function Create() {
   return (
     <Layout>
       <div>
-        <h2 className="mb-5 text-3xl font-semibold text-zinc-300">
-          Add new collection
-        </h2>
-
+        <h2 className="mb-5 text-3xl font-semibold">Add new collection</h2>
         <CreateCollectionForm />
       </div>
     </Layout>
@@ -94,9 +92,9 @@ function CreateCollectionForm() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-5 flex w-full flex-col gap-1">
           <label htmlFor="name">Collection name</label>
-          <input
+          <Input
             type="text"
-            className="px-4 py-2 text-zinc-900"
+            className="px-4 py-2"
             placeholder="My first collection"
             {...register('collectionTitle')}
           />
@@ -108,16 +106,16 @@ function CreateCollectionForm() {
         {fields.map((field, index) => (
           <div key={field.id} className="mb-3 flex justify-between gap-3">
             <div className="flex w-full flex-col gap-1">
-              <input
+              <Input
                 {...register(`clips.${index}.title`)}
-                className="w-full px-4 py-2 text-zinc-900"
+                className="w-full px-4 py-2"
                 placeholder="Clip title"
               />
             </div>
             <div className="flex w-full flex-col gap-1">
-              <input
+              <Input
                 {...register(`clips.${index}.url`)}
-                className="w-full px-4 py-2 text-zinc-900"
+                className="w-full px-4 py-2"
                 placeholder="Clip URL"
               />
             </div>
@@ -138,14 +136,12 @@ function CreateCollectionForm() {
         </div>
 
         <div className="mb-4">
-          <Button
-            content="Add clip"
-            type="button"
-            clickHandler={() => append({ title: '', url: '' })}
-          />
+          <Button type="button" onClick={() => append({ title: '', url: '' })}>
+            Add clip
+          </Button>
         </div>
 
-        <Button content="Add collection" type="submit" />
+        <Button type="submit">Add collection</Button>
       </form>
     </>
   );
