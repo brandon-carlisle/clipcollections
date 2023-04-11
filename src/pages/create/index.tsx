@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { api } from '@utils/api';
+import { MinusCircle } from 'lucide-react';
 import { type GetServerSidePropsContext } from 'next';
 import { useRouter } from 'next/router';
 import { type SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
@@ -103,27 +104,41 @@ function CreateCollectionForm() {
           </p>
         </div>
 
-        {fields.map((field, index) => (
-          <div key={field.id} className="mb-3 flex justify-between gap-3">
-            <div className="flex w-full flex-col gap-1">
-              <Input
-                {...register(`clips.${index}.title`)}
-                className="w-full px-4 py-2"
-                placeholder="Clip title"
-              />
+        {fields.map((field, index) => {
+          console.log(index);
+
+          return (
+            <div
+              key={field.id}
+              className="relative mb-3 flex justify-between gap-3"
+            >
+              <div className="flex w-full flex-col gap-1">
+                <Input
+                  {...register(`clips.${index}.title`)}
+                  className="w-full px-4 py-2"
+                  placeholder="Clip title"
+                />
+              </div>
+              <div className="flex w-full gap-1">
+                <Input
+                  {...register(`clips.${index}.url`)}
+                  className="w-full px-4 py-2"
+                  placeholder="Clip URL"
+                />
+
+                {index === 0 ? null : (
+                  <button
+                    type="button"
+                    onClick={() => remove(index)}
+                    className="text-slate-300"
+                  >
+                    <MinusCircle />
+                  </button>
+                )}
+              </div>
             </div>
-            <div className="flex w-full flex-col gap-1">
-              <Input
-                {...register(`clips.${index}.url`)}
-                className="w-full px-4 py-2"
-                placeholder="Clip URL"
-              />
-            </div>
-            <button type="button" onClick={() => remove(index)}>
-              🗑️
-            </button>
-          </div>
-        ))}
+          );
+        })}
 
         <div className="mb-3">
           <p className="font-bold text-red-500">
