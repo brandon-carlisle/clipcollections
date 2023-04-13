@@ -4,6 +4,7 @@ import {
   type InferGetStaticPropsType,
 } from 'next';
 import Image from 'next/image';
+import Link from 'next/link';
 import { type ParsedUrlQuery } from 'querystring';
 
 import { generateSSGHelper } from '@server/helpers/generate';
@@ -24,7 +25,7 @@ export default function Profile(
 
   return (
     <Layout>
-      <header className="mb-16 flex items-center justify-between">
+      <header className="mb-16 flex items-start justify-between">
         <h1 className="text-4xl font-semibold text-zinc-300">
           {data.name}&apos;s collections
         </h1>
@@ -70,7 +71,11 @@ export const getStaticPaths = () => {
   return { paths: [], fallback: 'blocking' };
 };
 
-function Collections({ userId }: { userId: string }) {
+interface CollectionsProps {
+  userId: string;
+}
+
+function Collections({ userId }: CollectionsProps) {
   const { data, isLoading, error } = api.collection.getAllByUserId.useQuery({
     userId,
   });
@@ -81,13 +86,22 @@ function Collections({ userId }: { userId: string }) {
 
   if (!data) return <p>No data available</p>;
 
-  console.log(data);
-
   return (
-    <div>
-      {data.map((collection) => (
-        <li key={collection.id}>{collection.name}</li>
-      ))}
-    </div>
+    <ul className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      {data.map((collection) => {
+        if (!collection.User?.name) return <p>Could not find user...</p>;
+
+        return (
+          <li key={collection.id}>
+            <Link
+              className="block rounded-lg bg-slate-800 px-4 py-8"
+              href={`/${collection.User.name}/${collection.id}`}
+            >
+              {collection.name}
+            </Link>
+          </li>
+        );
+      })}
+    </ul>
   );
 }

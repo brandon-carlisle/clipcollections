@@ -42,7 +42,9 @@ export const collectionRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const collections = await ctx.prisma.collection.findMany({
         where: { userId: { equals: input.userId } },
-        include: { clips: true },
+        include: {
+          User: { select: { name: true } },
+        },
       });
 
       if (!collections || collections.length === 0)
