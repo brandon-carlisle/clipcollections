@@ -2,7 +2,7 @@ import { signIn, useSession } from 'next-auth/react';
 import Head from 'next/head';
 import Link from 'next/link';
 
-import Button from '@components/Button';
+import { Button } from '@components/ui/Button';
 
 export default function HomePage() {
   const { data: session } = useSession();
@@ -28,19 +28,12 @@ export default function HomePage() {
 
           <div className="flex justify-center">
             {!session && (
-              <Button
-                content="Create collection"
-                clickHandler={() => void signIn('twitch')}
-                type="button"
-              />
+              <Button onClick={() => void signIn('twitch')}>Sign in</Button>
             )}
 
             {session && session.user.name && (
-              <Link
-                href={`/${session.user.name}`}
-                className="text-md rounded-lg bg-gray-800 px-5 py-2.5 font-medium text-white hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
-              >
-                Create collection
+              <Link href={`/create`}>
+                <Button variant="default">Create collection</Button>
               </Link>
             )}
           </div>
