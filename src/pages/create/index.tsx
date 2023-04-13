@@ -8,18 +8,15 @@ import { z } from 'zod';
 
 import { getServerAuthSession } from '@server/auth';
 
-import Layout from '@components/Layout';
 import { Button } from '@components/ui/Button';
 import { Input } from '@components/ui/Input';
 
 export default function Create() {
   return (
-    <Layout>
-      <div>
-        <h2 className="mb-5 text-3xl font-semibold">Add new collection</h2>
-        <CreateCollectionForm />
-      </div>
-    </Layout>
+    <div>
+      <h2 className="mb-5 text-3xl font-semibold">Add new collection</h2>
+      <CreateCollectionForm />
+    </div>
   );
 }
 
@@ -105,8 +102,6 @@ function CreateCollectionForm() {
         </div>
 
         {fields.map((field, index) => {
-          console.log(index);
-
           return (
             <div
               key={field.id}

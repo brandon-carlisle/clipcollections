@@ -9,8 +9,6 @@ import { type ParsedUrlQuery } from 'querystring';
 
 import { generateSSGHelper } from '@server/helpers/generate';
 
-import Layout from '@components/Layout';
-
 export default function Profile(
   props: InferGetStaticPropsType<typeof getStaticProps>,
 ) {
@@ -24,7 +22,7 @@ export default function Profile(
   if (!data) return <p>No user found</p>;
 
   return (
-    <Layout>
+    <>
       <header className="mb-16 flex items-start justify-between">
         <h1 className="text-4xl font-semibold text-zinc-300">
           {data.name}&apos;s collections
@@ -42,7 +40,7 @@ export default function Profile(
       </header>
 
       <Collections userId={data.id} />
-    </Layout>
+    </>
   );
 }
 
