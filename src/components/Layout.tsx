@@ -1,4 +1,3 @@
-import { Loader2 } from 'lucide-react';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -38,16 +37,12 @@ export default function Layout({ children }: LayoutProps) {
 }
 
 function Navbar() {
-  // const session = useSession();
-
   const { data: session, status } = useSession();
 
   const isLoading = status === 'loading';
 
   const isAuthedAndHasProfile =
     !!session && !!session.user?.name && !!session.user.image && !isLoading;
-
-  console.log(isAuthedAndHasProfile);
 
   return (
     <nav className="mb-10">
