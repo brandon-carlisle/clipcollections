@@ -1,8 +1,5 @@
 import { api } from '@utils/api';
-import {
-  type GetServerSidePropsContext,
-  type InferGetStaticPropsType,
-} from 'next';
+import { type GetStaticPropsContext, type InferGetStaticPropsType } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { type ParsedUrlQuery } from 'querystring';
@@ -48,7 +45,7 @@ interface Params extends ParsedUrlQuery {
   username: string;
 }
 
-export async function getStaticProps(ctx: GetServerSidePropsContext) {
+export async function getStaticProps(ctx: GetStaticPropsContext) {
   const params = ctx.params as Params;
 
   const ssg = generateSSGHelper();
