@@ -27,6 +27,8 @@ export default function HomePage() {
               <Button onClick={() => void signIn('twitch')}>Sign in</Button>
             )}
 
+            {!session && isLoading && <Button disabled>Sign in</Button>}
+
             {session && !isLoading && session.user.name && (
               <Link href={`/create`}>
                 <Button variant="default">Create collection</Button>
