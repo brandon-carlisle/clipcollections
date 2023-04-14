@@ -53,8 +53,6 @@ export const collectionRouter = createTRPCRouter({
           message: 'No collections found for user',
         });
 
-      console.log(collections);
-
       return collections;
     }),
 

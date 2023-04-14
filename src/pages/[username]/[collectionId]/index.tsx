@@ -1,4 +1,5 @@
 import { api } from '@utils/api';
+import { generateEmbedLink } from '@utils/embed';
 import { type GetStaticPropsContext, type InferGetStaticPropsType } from 'next';
 import Link from 'next/link';
 import { type ParsedUrlQuery } from 'querystring';
@@ -8,29 +9,46 @@ import { generateSSGHelper } from '@server/helpers/generate';
 export default function Collection(
   props: InferGetStaticPropsType<typeof getStaticProps>,
 ) {
-  const { data } = api.collection.getByCollectionId.useQuery({
+  const { data: collection } = api.collection.getByCollectionId.useQuery({
     collectionId: props.collectionId,
   });
 
+  if (!collection) return <p>Could not find that collection...</p>;
+
   return (
-    <div className="mb-20 flex flex-col justify-between gap-2 md:flex-row md:items-center">
-      <div className="flex w-full flex-col gap-1">
+    <>
+      <header className="mb-10">
         <h1 className="text-4xl font-semibold text-zinc-300">
-          {data?.name}{' '}
-          {data?.User?.name && (
+          {collection.name}{' '}
+          {collection.User?.name && (
             <>
               &ndash;{' '}
               <Link
                 className="inline-block font-light"
-                href={`/${data?.User?.name}`}
+                href={`/${collection.User.name}`}
               >
-                {data?.User?.name}
+                {collection.User.name}
               </Link>
             </>
           )}
         </h1>
+      </header>
+
+      <div className="grid grid-cols-1 gap-10">
+        {collection.clips.map((clip) => {
+          return (
+            <div key={clip.id}>
+              <div className="mb-3">{clip.title}</div>
+              <iframe
+                src={generateEmbedLink(clip.url)}
+                height="400"
+                width="100%"
+              ></iframe>
+            </div>
+          );
+        })}
       </div>
-    </div>
+    </>
   );
 }
 
