@@ -14,21 +14,18 @@ export default function Collection(
   });
 
   if (!collection) return <p>Could not find that collection...</p>;
+  if (collection.clips.length === 0) return <p>No clips found...</p>;
 
   return (
     <>
       <header className="mb-10">
         <h1 className="text-4xl font-semibold text-zinc-300">
-          {collection.name}{' '}
           {collection.User?.name && (
             <>
-              &ndash;{' '}
-              <Link
-                className="inline-block font-light"
-                href={`/${collection.User.name}`}
-              >
-                {collection.User.name}
+              <Link href={`/${collection.User.name}`}>
+                {collection.User.name} &ndash;{' '}
               </Link>
+              <span className="inline-block font-light">{collection.name}</span>
             </>
           )}
         </h1>
