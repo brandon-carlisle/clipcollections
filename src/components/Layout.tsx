@@ -29,25 +29,32 @@ export default function Layout({ children }: LayoutProps) {
 }
 
 function Navbar() {
-  const session = useSession();
+  // const session = useSession();
+
+  const { data: session, status } = useSession();
+
+  const isLoading = status === 'loading';
 
   return (
-    <nav className="mb-10">
+    <nav className="mb-10 h-24">
       <div className="mx-auto flex items-center justify-between py-6 px-3 md:max-w-7xl">
         <Link className="text-xl font-bold" href="/">
           ClipCollections
         </Link>
 
-        {session.data?.user.image &&
-        session.data.user.name &&
-        session.status === 'authenticated' ? (
-          <Link href={`/${session.data.user.name}`}>
-            <Avatar>
-              <AvatarImage src={session.data.user.image} />
+        <Avatar>
+          {!isLoading && status === 'authenticated' ? (
+            <Link href={`/${session.user.name || '/'}`}>
+              <AvatarImage
+                src={session.user.image || undefined}
+                alt="Profile picture"
+              />
               <AvatarFallback>CC</AvatarFallback>
-            </Avatar>
-          </Link>
-        ) : (
+            </Link>
+          ) : null}
+        </Avatar>
+
+        {!isLoading && status === 'unauthenticated' && (
           <Button onClick={() => void signIn('twitch')}>Sign in</Button>
         )}
       </div>

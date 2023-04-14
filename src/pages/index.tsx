@@ -4,7 +4,9 @@ import Link from 'next/link';
 import { Button } from '@components/ui/Button';
 
 export default function HomePage() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+
+  const isLoading = status === 'loading';
 
   return (
     <>
@@ -21,11 +23,11 @@ export default function HomePage() {
           </div>
 
           <div className="flex justify-center">
-            {!session && (
+            {!session && !isLoading && (
               <Button onClick={() => void signIn('twitch')}>Sign in</Button>
             )}
 
-            {session && session.user.name && (
+            {session && !isLoading && session.user.name && (
               <Link href={`/create`}>
                 <Button variant="default">Create collection</Button>
               </Link>
