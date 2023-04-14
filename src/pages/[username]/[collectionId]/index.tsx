@@ -1,24 +1,41 @@
 import { api } from '@utils/api';
 import { generateEmbedLink } from '@utils/embed';
+import { Trash2 } from 'lucide-react';
 import { type GetStaticPropsContext, type InferGetStaticPropsType } from 'next';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { type ParsedUrlQuery } from 'querystring';
 
 import { generateSSGHelper } from '@server/helpers/generate';
 
+import { Button } from '@components/ui/Button';
+
 export default function Collection(
   props: InferGetStaticPropsType<typeof getStaticProps>,
 ) {
-  const { data: collection } = api.collection.getByCollectionId.useQuery({
+  const { data: collection } = api.collection.getById.useQuery({
     collectionId: props.collectionId,
   });
+
+  const session = useSession();
+  const router = useRouter();
 
   if (!collection) return <p>Could not find that collection...</p>;
   if (collection.clips.length === 0) return <p>No clips found...</p>;
 
+  const isAuthor = session.data?.user.id === collection.User?.id;
+
+  const { mutate, status } = api.collection.remove.useMutation();
+
+  const handleRemoveCollection = () => mutate({ collectionId: collection.id });
+
+  if (status === 'success')
+    void router.push(`/${session.data?.user.name || '/'}`);
+
   return (
     <>
-      <header className="mb-10">
+      <header className="mb-10 flex justify-between">
         <h1 className="text-4xl font-semibold text-zinc-300">
           {collection.User?.name && (
             <>
@@ -29,6 +46,12 @@ export default function Collection(
             </>
           )}
         </h1>
+
+        {isAuthor && (
+          <Button variant="destructive" onClick={handleRemoveCollection}>
+            <Trash2 />
+          </Button>
+        )}
       </header>
 
       <div className="grid grid-cols-1 gap-10">
@@ -58,7 +81,7 @@ export async function getStaticProps(ctx: GetStaticPropsContext) {
 
   const ssg = generateSSGHelper();
 
-  await ssg.collection.getByCollectionId.prefetch({
+  await ssg.collection.getById.prefetch({
     collectionId: params.collectionId,
   });
 

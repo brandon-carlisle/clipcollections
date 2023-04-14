@@ -56,12 +56,34 @@ export const collectionRouter = createTRPCRouter({
       return collections;
     }),
 
-  getByCollectionId: publicProcedure
+  getById: publicProcedure
     .input(z.object({ collectionId: z.string() }))
     .query(({ ctx, input }) =>
       ctx.prisma.collection.findUnique({
         where: { id: input.collectionId },
-        include: { clips: true, User: { select: { name: true } } },
+        include: { clips: true, User: { select: { name: true, id: true } } },
       }),
     ),
+
+  remove: protectedProcedure
+    .input(z.object({ collectionId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const userForCollection = await ctx.prisma.collection.findUnique({
+        where: { id: input.collectionId },
+        select: { userId: true },
+      });
+
+      const isAuthor = ctx.session.user.id === userForCollection?.userId;
+
+      if (isAuthor) {
+        return await ctx.prisma.collection.delete({
+          where: { id: input.collectionId },
+        });
+      } else {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Not author of collection',
+        });
+      }
+    }),
 });
