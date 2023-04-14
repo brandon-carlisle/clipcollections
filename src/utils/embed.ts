@@ -9,7 +9,7 @@ export function generateEmbedLink(url: string) {
     const clip = embed[embed.length - 1];
     return `https://clips.twitch.tv/embed?clip=${
       clip || FALLBACK_CLIP
-    }&parent=https://clipcollections.vercel.app`;
+    }&parent=clipcollections.vercel.app`;
   }
   // Otherwise the url provided has this structure
   // https://www.twitch.tv/scump/clip/SpoopyRoundPonyMcaT-w5zR8yV3LEN_EgzB?filter=clips&range=7d&sort=time
@@ -17,6 +17,6 @@ export function generateEmbedLink(url: string) {
     const clip = embed[embed.length - 1]?.split('?')[0];
     return `https://clips.twitch.tv/embed?clip=${
       clip || FALLBACK_CLIP
-    }&parent=https://clipcollections.vercel.app`;
+    }&parent=clipcollections.vercel.app`;
   }
 }
