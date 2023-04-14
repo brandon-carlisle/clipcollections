@@ -79,10 +79,10 @@ function CreateCollectionForm() {
     });
   };
 
+  if (isLoading) return <p>Loading...</p>;
+
   if (isSuccess && data.username && data.collectionId)
     void router.push(`/${data.username}/${data.collectionId}`);
-
-  if (isLoading) return <p>Loading...</p>;
 
   return (
     <>

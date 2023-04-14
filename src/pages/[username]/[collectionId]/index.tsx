@@ -9,6 +9,17 @@ import { type ParsedUrlQuery } from 'querystring';
 
 import { generateSSGHelper } from '@server/helpers/generate';
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@components/ui/AlertDialog';
 import { Button } from '@components/ui/Button';
 
 export default function Collection(
@@ -27,6 +38,8 @@ export default function Collection(
   const isAuthor = session.data?.user.id === collection.User?.id;
 
   const { mutate, status } = api.collection.remove.useMutation();
+
+  if (status === 'loading') return <p>Loading...</p>;
 
   const handleRemoveCollection = () => mutate({ collectionId: collection.id });
 
@@ -48,9 +61,32 @@ export default function Collection(
         </h1>
 
         {isAuthor && (
-          <Button variant="destructive" onClick={handleRemoveCollection}>
-            <Trash2 />
-          </Button>
+          <>
+            <AlertDialog>
+              <AlertDialogTrigger>
+                <Button variant="destructive">
+                  <Trash2 />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Are you sure absolutely sure?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete
+                    this collection from our servers.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleRemoveCollection}>
+                    <Trash2 />
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </>
         )}
       </header>
 
