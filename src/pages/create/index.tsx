@@ -88,19 +88,28 @@ function CreateCollectionForm() {
     <>
       {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="mb-5 flex w-full flex-col gap-1">
-          <label htmlFor="name">Collection name</label>
+        <div className="mb-5 flex w-full flex-col gap-2">
+          <label htmlFor="collection-title">Collection name</label>
           <Input
             type="text"
             className="px-4 py-2"
-            placeholder="My first collection"
+            placeholder="Warzone/MW2"
             {...register('collectionTitle')}
+            id="collection-title"
           />
           <p className="font-bold text-red-500">
             {errors.collectionTitle?.message}
           </p>
         </div>
 
+        <div className="mb-2 flex gap-2">
+          <label htmlFor="clip-title" className="w-1/2">
+            Clip title
+          </label>
+          <label htmlFor="clip-url" className="w-1/2">
+            Clip url
+          </label>
+        </div>
         {fields.map((field, index) => {
           return (
             <div
@@ -111,14 +120,16 @@ function CreateCollectionForm() {
                 <Input
                   {...register(`clips.${index}.title`)}
                   className="w-full px-4 py-2"
-                  placeholder="Clip title"
+                  placeholder="Graphic settings"
+                  id="clip-title"
                 />
               </div>
               <div className="flex w-full gap-1">
                 <Input
                   {...register(`clips.${index}.url`)}
                   className="w-full px-4 py-2"
-                  placeholder="Clip URL"
+                  placeholder="https://clips.twitch.tv/SillySourFriesPrimeMe-kAZK8txFwtMISPCW"
+                  id="clip-url"
                 />
 
                 {index === 0 ? null : (
@@ -146,7 +157,11 @@ function CreateCollectionForm() {
         </div>
 
         <div className="mb-4">
-          <Button type="button" onClick={() => append({ title: '', url: '' })}>
+          <Button
+            type="button"
+            onClick={() => append({ title: '', url: '' })}
+            variant="subtle"
+          >
             Add clip
           </Button>
         </div>
