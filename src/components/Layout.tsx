@@ -78,9 +78,14 @@ function Navbar() {
               <DropdownMenuSeparator />
 
               <DropdownMenuLabel>About</DropdownMenuLabel>
-              <DropdownMenuItem className="hover:cursor-pointer">
-                Github
-              </DropdownMenuItem>
+              <a
+                href="https://github.com/brandon-carlisle/clipcollections"
+                target="_blank"
+              >
+                <DropdownMenuItem className="hover:cursor-pointer">
+                  Github
+                </DropdownMenuItem>
+              </a>
             </DropdownMenuContent>
           </DropdownMenu>
         )}
