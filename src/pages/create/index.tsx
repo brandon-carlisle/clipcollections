@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { api } from '@utils/api';
 import { MinusCircle } from 'lucide-react';
 import { type GetServerSidePropsContext } from 'next';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { type SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -24,7 +25,7 @@ export const formSchema = z.object({
   collectionTitle: z
     .string()
     .min(1, { message: 'Title must contain at least 1 character(s)' })
-    .max(12, { message: 'Title must contain at most 12 character(s)' }),
+    .max(20, { message: 'Title must contain at most 20 character(s)' }),
   clips: z
     .array(
       z.object({
@@ -33,8 +34,8 @@ export const formSchema = z.object({
           .min(1, {
             message: 'Clip title must contain at least 1 character(s)',
           })
-          .max(12, {
-            message: 'Clip title must contain at most 12 character(s)',
+          .max(20, {
+            message: 'Clip title must contain at most 20 character(s)',
           }),
         url: z
           .string()
@@ -86,6 +87,9 @@ function CreateCollectionForm() {
 
   return (
     <>
+      <Head>
+        <title>Create | ClipCollections</title>
+      </Head>
       {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-5 flex w-full flex-col gap-2">

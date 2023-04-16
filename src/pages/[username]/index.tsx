@@ -1,5 +1,6 @@
 import { api } from '@utils/api';
 import { type GetStaticPropsContext, type InferGetStaticPropsType } from 'next';
+import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { type ParsedUrlQuery } from 'querystring';
@@ -20,6 +21,9 @@ export default function Profile(
 
   return (
     <>
+      <Head>
+        <title>{data.name} | ClipCollections</title>
+      </Head>
       <header className="mb-16 flex items-start justify-between">
         <h1 className="text-4xl font-semibold text-zinc-300">
           {data.name}&apos;s collections

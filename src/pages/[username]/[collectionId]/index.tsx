@@ -3,6 +3,7 @@ import { generateEmbedLink } from '@utils/embed';
 import { Trash2 } from 'lucide-react';
 import { type GetStaticPropsContext, type InferGetStaticPropsType } from 'next';
 import { useSession } from 'next-auth/react';
+import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { type ParsedUrlQuery } from 'querystring';
@@ -48,6 +49,11 @@ export default function Collection(
 
   return (
     <>
+      <Head>
+        <title>
+          {collection.User?.name} | {collection.name}
+        </title>
+      </Head>
       <header className="mb-10 flex justify-between">
         <h1 className="text-4xl font-semibold text-zinc-300">
           {collection.User?.name && (

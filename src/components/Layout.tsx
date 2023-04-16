@@ -22,14 +22,6 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   return (
     <>
-      <Head>
-        <title>Clip Collections</title>
-        <meta
-          name="description"
-          content="Generate your own Twitch clip collections to share with your chat"
-        />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
       <Navbar />
       <main className="mx-auto h-full w-full p-4 md:max-w-2xl">{children}</main>
     </>
