@@ -76,6 +76,12 @@ export const collectionRouter = createTRPCRouter({
       const isAuthor = ctx.session.user.id === userForCollection?.userId;
 
       if (isAuthor) {
+        // Delete every clip from that collection
+        await ctx.prisma.clip.deleteMany({
+          where: { collectionId: input.collectionId },
+        });
+
+        // Delete the collection
         return await ctx.prisma.collection.delete({
           where: { id: input.collectionId },
         });
