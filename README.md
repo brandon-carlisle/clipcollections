@@ -1,6 +1,6 @@
 # ClipCollections
 
-ClipCollections is a simple tool that helps Twitch streamers organize their clips into collections for easy sharing and improved discoverability. Create collections of your best moments, game settings, loadouts, or any other category you want.
+ClipCollections is a simple tool that helps Twitch streamers organize their clips into collections for easy sharing. Create collections of your best moments, game settings, loadouts, or any other category you want.
 
 ## How it works
 
