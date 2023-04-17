@@ -100,7 +100,7 @@ export default function Collection(
         {collection.clips.map((clip) => {
           return (
             <div key={clip.id}>
-              <div className="mb-3">{clip.title}</div>
+              <div className="mb-3 text-xl font-semibold">{clip.title}</div>
               <iframe
                 src={generateEmbedLink(clip.url)}
                 height="400"
