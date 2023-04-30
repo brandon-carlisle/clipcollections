@@ -1,18 +1,28 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { api } from '@utils/api';
 import { MinusCircle } from 'lucide-react';
-import { type GetServerSidePropsContext } from 'next';
+import { signIn, useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { type SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { getServerAuthSession } from '@server/auth';
-
 import { Button } from '@components/ui/Button';
 import { Input } from '@components/ui/Input';
 
 export default function Create() {
+  const { data: session, status } = useSession();
+
+  if (status === 'loading') return <p>Loading...</p>;
+
+  if (!session)
+    return (
+      <div>
+        <p className="mb-4">Please sign in to add a collection</p>
+        <Button onClick={() => void signIn('twitch')}>Sign in</Button>
+      </div>
+    );
+
   return (
     <div>
       <h2 className="mb-5 text-3xl font-semibold">Add new collection</h2>
@@ -174,23 +184,4 @@ function CreateCollectionForm() {
       </form>
     </>
   );
-}
-
-export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-  const session = await getServerAuthSession(ctx);
-
-  if (!session) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: '/',
-      },
-    };
-  }
-
-  ctx;
-
-  return {
-    props: { userSession: session },
-  };
 }
