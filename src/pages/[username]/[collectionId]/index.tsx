@@ -66,34 +66,7 @@ export default function Collection(
           )}
         </h1>
 
-        {isAuthor && (
-          <>
-            <AlertDialog>
-              <AlertDialogTrigger>
-                <Button variant="destructive">
-                  <Trash2 />
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>
-                    Are you sure absolutely sure?
-                  </AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete
-                    this collection from our servers.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleRemoveCollection}>
-                    <Trash2 />
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </>
-        )}
+        {isAuthor && <RemoveCollectionModal handler={handleRemoveCollection} />}
       </header>
 
       <div className="grid grid-cols-1 gap-10">
@@ -138,3 +111,36 @@ export async function getStaticProps(ctx: GetStaticPropsContext) {
 export const getStaticPaths = () => {
   return { paths: [], fallback: 'blocking' };
 };
+
+function RemoveCollectionModal({ handler }: { handler: () => void }) {
+  return (
+    <>
+      <AlertDialog>
+        <AlertDialogTrigger>
+          <Button variant="destructive">
+            <Trash2 />
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete this
+              collection from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handler}>
+              <Trash2 />
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+}
+
+function CopyCommand() {
+  return <div></div>;
+}
