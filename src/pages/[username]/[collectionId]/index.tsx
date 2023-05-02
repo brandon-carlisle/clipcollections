@@ -162,7 +162,9 @@ function CopyCommand({
 
   return (
     <div className="mb-8">
-      <p className="mb-2">Copy command to add to channel</p>
+      <p className="mb-2">
+        Copy command to add to channel (we will add the link for you)
+      </p>
 
       <div className="flex w-full items-center space-x-2">
         <Input value={input} onChange={(e) => setInput(e.target.value)} />
