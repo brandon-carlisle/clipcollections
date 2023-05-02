@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from './ui/DropdownMenu';
 import { Separator } from './ui/Seperator';
+import Spinner from './ui/Spinner';
 
 interface LayoutProps {
   children: ReactNode;
@@ -85,7 +86,7 @@ function Navbar() {
           <Button onClick={() => void signIn('twitch')}>Sign in</Button>
         )}
 
-        {isLoading && <Button disabled>Sign in</Button>}
+        {isLoading && <Spinner />}
       </div>
       <Separator />
     </nav>

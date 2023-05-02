@@ -2,6 +2,7 @@ import { signIn, useSession } from 'next-auth/react';
 import Link from 'next/link';
 
 import { Button } from '@components/ui/Button';
+import Spinner from '@components/ui/Spinner';
 
 export default function HomePage() {
   const { data: session, status } = useSession();
@@ -27,7 +28,7 @@ export default function HomePage() {
               <Button onClick={() => void signIn('twitch')}>Sign in</Button>
             )}
 
-            {!session && isLoading && <Button disabled>Sign in</Button>}
+            {!session && isLoading && <Spinner />}
 
             {session && !isLoading && session.user.name && (
               <Link href={`/create`}>
