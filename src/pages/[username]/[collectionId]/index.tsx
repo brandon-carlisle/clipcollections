@@ -1,12 +1,13 @@
 import { api } from '@utils/api';
 import { generateEmbedLink } from '@utils/embed';
-import { Trash2 } from 'lucide-react';
+import { Copy, Trash2 } from 'lucide-react';
 import { type GetStaticPropsContext, type InferGetStaticPropsType } from 'next';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { type ParsedUrlQuery } from 'querystring';
+import { useState } from 'react';
 
 import { generateSSGHelper } from '@server/helpers/generate';
 
@@ -22,6 +23,7 @@ import {
   AlertDialogTrigger,
 } from '@components/ui/AlertDialog';
 import { Button } from '@components/ui/Button';
+import { Input } from '@components/ui/Input';
 
 export default function Collection(
   props: InferGetStaticPropsType<typeof getStaticProps>,
@@ -68,6 +70,10 @@ export default function Collection(
 
         {isAuthor && <RemoveCollectionModal handler={handleRemoveCollection} />}
       </header>
+
+      {isAuthor && (
+        <CopyCommand collectionName={collection.name} path={router.asPath} />
+      )}
 
       <div className="grid grid-cols-1 gap-10">
         {collection.clips.map((clip) => {
@@ -117,9 +123,7 @@ function RemoveCollectionModal({ handler }: { handler: () => void }) {
     <>
       <AlertDialog>
         <AlertDialogTrigger>
-          <Button variant="destructive">
-            <Trash2 />
-          </Button>
+          <Trash2 className="text-red-500" />
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -141,6 +145,31 @@ function RemoveCollectionModal({ handler }: { handler: () => void }) {
   );
 }
 
-function CopyCommand() {
-  return <div></div>;
+function CopyCommand({
+  collectionName,
+  path,
+}: {
+  collectionName: string;
+  path: string;
+}) {
+  const [input, setInput] = useState(`!addcommand ${collectionName}`);
+
+  const handleCopy = async () => {
+    const commandToCopy = `${input} https://clipcollections.vercel.app${path}`;
+    await navigator.clipboard.writeText(commandToCopy);
+    alert(`Copied to clipboard:\n${commandToCopy}`);
+  };
+
+  return (
+    <div className="mb-8">
+      <p className="mb-2">Copy command to add to channel</p>
+
+      <div className="flex w-full items-center space-x-2">
+        <Input value={input} onChange={(e) => setInput(e.target.value)} />
+        <Button type="button" onClick={() => void handleCopy()}>
+          <Copy />
+        </Button>
+      </div>
+    </div>
+  );
 }
