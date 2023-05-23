@@ -9,6 +9,7 @@ import { z } from 'zod';
 
 import { Button } from '@components/ui/Button';
 import { Input } from '@components/ui/Input';
+import Spinner from '@components/ui/Spinner';
 
 export default function Create() {
   const { data: session, status } = useSession();
@@ -90,8 +91,6 @@ function CreateCollectionForm() {
     });
   };
 
-  if (isLoading) return <p>Loading...</p>;
-
   if (isSuccess && data.username && data.collectionId)
     void router.push(`/${data.username}/${data.collectionId}`);
 
@@ -100,7 +99,7 @@ function CreateCollectionForm() {
       <Head>
         <title>Create | ClipCollections</title>
       </Head>
-      {!isLoading && !isSuccess && (
+      {!isLoading && !isSuccess ? (
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-5 flex w-full flex-col gap-2">
@@ -183,8 +182,9 @@ function CreateCollectionForm() {
 
           <Button type="submit">Add collection</Button>
         </form>
+      ) : (
+        <Spinner />
       )}
-      {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
     </>
   );
 }
